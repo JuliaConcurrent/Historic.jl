@@ -1,0 +1,18 @@
+name = "HistoricAnalysis"
+uuid = "6d5d2b36-a120-4599-9422-7151c3bea3cf"
+authors = ["Takafumi Arakaki <aka.tkf@gmail.com> and contributors"]
+version = "0.1.0-DEV"
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Historic = "e6ec0b50-ef98-488a-a141-280ae2eaf113"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
