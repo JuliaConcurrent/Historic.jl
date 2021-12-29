@@ -1,6 +1,13 @@
+function load_docstring(api::AbstractString, recordmodule)
+    doc = read(joinpath(@__DIR__, "docs/$api.md"), String)
+    return replace(doc, raw"$Recorder" => string(recordmodule))
+end
+
 macro define(recordmodule)
     Runtime = @__MODULE__
-    at_record_doc = read(joinpath(@__DIR__, "docs/@record.md"), String)
+    at_record_doc = load_docstring("@record", recordmodule)
+    enable_doc = load_docstring("enable", recordmodule)
+    enable_logging_doc = load_docstring("enable_logging", recordmodule)
     expr = quote
         module $recordmodule
         const Runtime = $Runtime
@@ -13,8 +20,8 @@ macro define(recordmodule)
 
         struct IsRecordingFunction <: Runtime.AbstractIsRecordingFunction end
         const isrecording = IsRecordingFunction()
-        enable() = @eval isrecording() = true
-        disable() = @eval isrecording() = true
+        @doc $enable_doc enable() = @eval isrecording() = true
+        @doc $enable_doc disable() = @eval isrecording() = true
 
         LOGGER = nothing
         get_logger() = nothing
@@ -26,8 +33,8 @@ macro define(recordmodule)
                 @eval get_logger() = LOGGER::$(Expr(:$, :(typeof(logger))))
             end
         end
-        enable_logging() = set_logger(Runtime.CurrentLogger())
-        disable_logging() = set_logger(nothing)
+        @doc $enable_logging_doc enable_logging() = set_logger(Runtime.CurrentLogger())
+        @doc $enable_logging_doc disable_logging() = set_logger(nothing)
 
         const RECORDS = Runtime.create_records()
         function __init__()

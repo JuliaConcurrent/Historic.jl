@@ -1,5 +1,5 @@
-    @record($name, $k₁ = $v₁, …, $kₙ = $vₙ)
-    @record($name, $k₁ = $v₁, …, $kₙ = $vₙ, {$a₁ = $b₁, …, $aₙ = $bₙ})
+    $Recorder.@record($name, $k₁ = $v₁, …, $kₙ = $vₙ)
+    $Recorder.@record($name, $k₁ = $v₁, …, $kₙ = $vₙ, {$a₁ = $b₁, …, $aₙ = $bₙ})
 
 Record event named `$name` and optional event data (key-value pairs `$kᵢ = $vᵢ`)
 with optional control arguments `$aᵢ = $bᵢ`.
