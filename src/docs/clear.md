@@ -1,4 +1,3 @@
     Historic.clear()
-    Historic.clear(recordmodule::Module)
 
-Remove recorded events.
+Remove recorded events in all existing recorder modules.
