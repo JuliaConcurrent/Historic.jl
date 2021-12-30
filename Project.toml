@@ -1,7 +1,7 @@
 name = "Historic"
 uuid = "e6ec0b50-ef98-488a-a141-280ae2eaf113"
 authors = ["Takafumi Arakaki <aka.tkf@gmail.com> and contributors"]
-version = "0.1.0-DEV"
+version = "0.1.0"
 
 [deps]
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
