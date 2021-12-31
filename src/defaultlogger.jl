@@ -5,22 +5,6 @@ end
 
 DefaultLogger() = DefaultLogger(stderr, current_logger())
 
-function kwarg_sortkey(x)
-    k, v = x
-    cost = if v isa Union{Number,Symbol}
-        0
-    elseif v isa AbstractString
-        1
-    elseif v isa TaskID && k === :taskid  # TODO: get rid of this heuristics?
-        200
-    elseif v isa AbstractID
-        -1
-    else
-        100
-    end
-    return (cost, k)
-end
-
 function Logging.handle_message(
     logger::DefaultLogger,
     level::Logging.LogLevel,
@@ -33,7 +17,6 @@ function Logging.handle_message(
     exception = nothing,
     kwargs...,
 )
-    @nospecialize(kwargs)
     if exception !== nothing
         handle_message(
             logger.fallback,
@@ -48,7 +31,6 @@ function Logging.handle_message(
             kwargs...,
         )
     end
-    kvs = sort!(collect(Pair{Symbol,Any}, kwargs); by = kwarg_sortkey)
     printing_in_oneline(logger.io) do io, should_stop
         if level != Logging.Info
             printstyled(io, level; color = :blue)
@@ -56,9 +38,9 @@ function Logging.handle_message(
         end
         print(io, message)
         should_stop() && return
-        for (k, v) in kvs
+        for (k, v) in kwargs
             print(io, ' ', k, '=')
-            print(io, v)  # dynamic dispatch
+            print(io, v)
             should_stop() && return
         end
     end

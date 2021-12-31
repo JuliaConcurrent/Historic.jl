@@ -144,18 +144,19 @@ function (record::AbstractRecordFunction)(
         islogging = false
     end
 
-    if record.isrecording() || islogging
-        recorddata = (; record.defaultdata()..., data...)
-    else
-        return
-    end
-
     if record.isrecording()
+        # Heuristics: `defaultdata` is shared across all records and it produces
+        # the most "dense" column which is presumably the most informative one.
+        # Putting it first so that they come first in the column tables.
+        recorddata = (; record.defaultdata()..., data...)
         record!(record.get_records(), name, recorddata; options...)
     end
 
     if islogging
-        logrecord(logger, name, recorddata, record.prefix(); options...)
+        # Heuristics: `defaultdata` is probably included in `prefix`. So, put it
+        # at the end so that `DefaultLogger` prints the non-default data first.
+        logdata = (; data..., record.defaultdata()...)
+        logrecord(logger, name, logdata, record.prefix(); options...)
     end
 end
 
