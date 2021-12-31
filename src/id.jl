@@ -20,7 +20,7 @@ end
 TaskID(task::Task) = TaskID(UInt(pointer_from_objref(task)))
 idprefix(::TaskID) = "task:"
 
-struct ObjectID
+struct ObjectID <: AbstractID
     value::UInt
 
     function ObjectID(x)
