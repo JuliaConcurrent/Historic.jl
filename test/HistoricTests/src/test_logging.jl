@@ -7,11 +7,7 @@ using Test
 using ..Samples: Samples, Default
 
 function with_logging(f, recordmodule, logger = true)
-    if logger === true
-        recordmodule.enable_logging()
-    else
-        recordmodule.set_logger(logger)
-    end
+    recordmodule.set_logger(logger)
     try
         Base.invokelatest(f)
     finally
@@ -21,19 +17,19 @@ end
 
 function test_default()
     Historic.clear(Default)
-    logger = Test.TestLogger()
-    with_logger(logger) do
-        with_logging(Default) do
-            Samples.default_simple()
-            Samples.default_withdata(1)
-            Samples.default_withdata(2)
-        end
+    main = Test.TestLogger()
+    with_logging(Default, main) do
+        Samples.default_simple()
+        Samples.default_withdata(1)
+        Samples.default_withdata(2)
+        Samples.default_throw()
     end
     prefix = Historic.defaultprefix()
-    @test logger.logs[1].message == "$(prefix)simple"
-    @test logger.logs[2].message == "$(prefix)withdata"
-    @test logger.logs[3].message == "$(prefix)withdata"
-    return logger
+    @test main.logs[1].message == "$(prefix)simple"
+    @test main.logs[2].message == "$(prefix)withdata"
+    @test main.logs[3].message == "$(prefix)withdata"
+    @test main.logs[3].message == "$(prefix)withdata"
+    return main
 end
 
 end  # module

@@ -16,4 +16,12 @@ default_withdata(v) = Default.@record(:withdata, k = v)
 custom_simple() = Custom.@record(:simple)
 custom_withdata(v) = Custom.@record(:withdata, k = v)
 
+function default_throw()
+    try
+        error("some exception")
+    catch err
+        Default.@record(:catch, exception = (err, catch_backtrace()))
+    end
+end
+
 end  # module
