@@ -33,7 +33,8 @@ macro define(recordmodule)
                 @eval get_logger() = LOGGER::$(Expr(:$, :(typeof(logger))))
             end
         end
-        @doc $enable_logging_doc enable_logging() = set_logger(Runtime.CurrentLogger())
+        default_logger() = Runtime.DefaultLogger()
+        @doc $enable_logging_doc enable_logging() = set_logger(default_logger())
         @doc $enable_logging_doc disable_logging() = set_logger(nothing)
 
         const RECORDS = Runtime.create_records()
