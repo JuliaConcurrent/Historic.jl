@@ -20,6 +20,7 @@ function test_default()
     main = Test.TestLogger()
     with_logging(Default, main) do
         Samples.default_simple()
+        Samples.default_noyield()
         Samples.default_withdata(1)
         Samples.default_withdata(2)
         Samples.default_throw()

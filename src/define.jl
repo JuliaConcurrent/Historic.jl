@@ -99,7 +99,7 @@ function record_impl(
     recordname,
     exprs,
 )
-    if isexpr(get(exprs, lastindex(exprs), nothing), :cury)
+    if isexpr(get(exprs, lastindex(exprs), nothing), :braces)
         options = map(as_kwarg_expr, exprs[end].args)
         exprs = exprs[begin:end-1]
     else

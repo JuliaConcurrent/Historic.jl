@@ -6,9 +6,10 @@ as_logger(::CurrentLogger) = current_logger()
 
 should_log(options) = get(options, :log, NamedTuple()) !== nothing
 
-streamtype(::AbstractLogger) = IO
+streamof(::AbstractLogger) = nothing
+may_yield(::Nothing) = true
 may_yield(::IO) = true
-may_yield(logger::AbstractLogger) = may_yield(streamtype(logger))
+may_yield(logger::AbstractLogger) = may_yield(streamof(logger))
 may_yield(::CurrentLogger) = may_yield(current_logger())
 # TODO: Define a blocking `IO` wrapping `Core.print` and a logger factory using
 # it.
