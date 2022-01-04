@@ -13,23 +13,21 @@ const EVENT_BLOCKSIZE = Ref(1024)
 
 thread_local_event_records() = BlockLinkedList(Vector{Event}, EVENT_BLOCKSIZE[])
 
+const EventRecordShard = typeof(thread_local_event_records())
+
 # TODO: thread safety
-struct EventRecord
-    shards::Vector{typeof(thread_local_event_records())}
+mutable struct EventRecord
+    @atomic shards::Vector{EventRecordShard}
 end
+
+new_shards() = EventRecordShard[thread_local_event_records() for _ in 1:Threads.nthreads()]
 
 create_records() = init_records!(EventRecord(Union{}[]))
-
-function init_records!(records::EventRecord)
-    resize!(records.shards, Threads.nthreads())
-    for i in eachindex(records.shards)
-        records.shards[i] = thread_local_event_records()
-    end
-    return records
-end
+init_records!(records::EventRecord) = empty!(records)
 
 function Base.empty!(records::EventRecord)
-    foreach(empty!, records.shards)
+    shards = new_shards()
+    @atomic records.shards = shards
     return records
 end
 
@@ -45,6 +43,7 @@ function record!(
     log::NamedTuple = NamedTuple(),
 )
     event = Event(name, data, location, __source__, __module__, time_ns)
-    push!(records.shards[Threads.threadid()], event)
+    shards = @atomic records.shards
+    push!(shards[Threads.threadid()], event)
     return event
 end
