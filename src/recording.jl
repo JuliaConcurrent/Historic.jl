@@ -28,6 +28,11 @@ function init_records!(records::EventRecord)
     return records
 end
 
+function Base.empty!(records::EventRecord)
+    foreach(empty!, records.shards)
+    return records
+end
+
 function record!(
     records::EventRecord,
     name::Symbol,
@@ -42,9 +47,4 @@ function record!(
     event = Event(name, data, location, __source__, __module__, time_ns)
     push!(records.shards[Threads.threadid()], event)
     return event
-end
-
-function Base.empty!(records::EventRecord)
-    foreach(empty!, records.shards)
-    return records
 end
